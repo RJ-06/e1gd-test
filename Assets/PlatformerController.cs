@@ -13,17 +13,38 @@ public class PlatformerController : MonoBehaviour
 
     [SerializeField] float jumpForce;
 
+    public int coinsCollected = 0;
+
+    [SerializeField] Animator animator;
+    [SerializeField] SpriteRenderer sprite;
+    bool isMovingRight;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
+        //animator.SetBool("name", value)
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        animator.SetBool("isJumping", !isTouchingGround);
+        //animator.SetBool("isRunning", MathF.Abs(rb.linearVelocityX) > 0.01f);
+        animator.SetBool("isRunning", !Mathf.Approximately(rb.linearVelocityX, 0f));
+        if (isMovingRight && moveX < 0)
+        {
+            isMovingRight = false;
+            sprite.flipX = true;
+        }
+        else if (!isMovingRight && moveX > 0) 
+        {
+            isMovingRight = true;
+            sprite.flipX = false;
+        }
     }
 
     private void FixedUpdate()
@@ -51,6 +72,7 @@ public class PlatformerController : MonoBehaviour
         {
             isTouchingGround = true;
         }
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)
